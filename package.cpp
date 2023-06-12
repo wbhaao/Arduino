@@ -1,7 +1,7 @@
 #include <LedControl.h>
 #include <LiquidCrystal_I2C.h>
-#include <stdlib.h>
-#include <time.h>
+// #include <cstdlib> //rand(), srand()
+// #include <ctime> //time()
 // #include <iostream>
 // #include <future>
 #include <Wire.h>
@@ -496,7 +496,7 @@ void jumpman(int cnt);
 // ---------------- 기본 동작 -------------
 int cnt = 0;
 int upPin = 4;
-int downPin = 3;
+int downPin = 8;
 
 int leftPin = 2;
 int rightPin = 5;
@@ -536,9 +536,8 @@ void setup() {
   lcd.init();
   lcd.backlight();
   lcd.setCursor(0, 0);
-  randomSeed(analogRead(0));
 
-  srand(time(NULL));
+  randomSeed(analogRead(0));
 }
 
 void buttonControl(int upState, int downState, int leftState, int rightState);
@@ -1628,9 +1627,11 @@ void showArrow(int num, int a);
 void memorize_gameover();
 
 void memorizegame() {
+  int upButtonState = 0, downButtonState = 0, leftButtonState = 0, rightButtonState = 0;
   // 보여주는 상태
   for (;;){
-  randomNum = rand() % 4 + 1;
+  randomNum = random(1, 5);
+  
   randomArray[countA] = randomNum;
   for (int j = 0; j <= countA; j++) {
     showArrow(randomArray[j], 1);
@@ -1648,7 +1649,6 @@ void memorizegame() {
     int leftState = digitalRead(leftPin);
     int rightState = digitalRead(rightPin);
 
-    int upButtonState=0, downButtonState=0, leftButtonState=0, rightButtonState=0;
 
     if (upState == 1) {
       if (upButtonState == 0) {
@@ -1659,7 +1659,7 @@ void memorizegame() {
 
     if (upState == 0) {
       if (upButtonState == 1) {
-        if (randomArray[countB] == 3){
+        if (randomArray[countB] == 4){
           countB++;
         }
         else memorize_gameover();
@@ -1677,7 +1677,7 @@ void memorizegame() {
   
     if (downState == 0) {
       if (downButtonState == 1) {
-        if (randomArray[countB] == 4){
+        if (randomArray[countB] == 3){
           countB++;
         }
         else memorize_gameover();
@@ -1688,6 +1688,7 @@ void memorizegame() {
   
     if (leftState == 1) {
       if (leftButtonState == 0) {
+        lcd.print("down");
         delay(10);
         leftButtonState = 1;
       }
@@ -1721,24 +1722,16 @@ void memorizegame() {
         rightButtonState = 0;
       }
     }
-    if (countA == countB) break;
+    if (countA == countB){
+      lcd.print("pass!");
+      break;
+  }
   }
 }
 }
 
 void showArrow(int num, int a) {
   byte leftArrow[] = {
-    B00011000,
-    B00110000,
-    B01100000,
-    B11111111,
-    B11111111,
-    B01100000,
-    B00110000,
-    B00011000
-};
-
-byte rightArrow[] = {
   B00011000,
   B00001100,
   B00000110,
@@ -1749,48 +1742,58 @@ byte rightArrow[] = {
   B00011000
 };
 
+byte rightArrow[] = {
+  B00011000,
+    B00110000,
+    B01100000,
+    B11111111,
+    B11111111,
+    B01100000,
+    B00110000,
+    B00011000
+};
+
 byte upArrow[] = {
     B00011000,
-    B00111100,
-    B01111110,
-    B11011011,
+    B00011000,
+    B00011000,
     B10011001,
-    B00011000,
-    B00011000,
+    B11011011,
+    B01111110,
+    B00111100,
     B00011000
 };
 
 byte downArrow[] = {
     B00011000,
-    B00011000,
-    B00011000,
-    B10011001,
-    B11011011,
-    B01111110,
     B00111100,
+    B01111110,
+    B11011011,
+    B10011001,
+    B00011000,
+    B00011000,
     B00011000
 };
 
   if (a == 0){
     lc.clearDisplay(0);
+    lc.clearDisplay(1);
+    lc.clearDisplay(2);
+    lc.clearDisplay(3);
   }
   else if (a == 1) {
     for (int i = 0; i < 8; i++) {
       if (num == 1){
-        lcd.print("1");
-        lc.setRow(0, i, rightArrow[i]);
+        lc.setRow(3, i, rightArrow[i]);
       }
       else if (num == 2){
-        lcd.print("2");
-        lc.setRow(1, i, leftArrow[i]);
+        lc.setRow(2, i, leftArrow[i]);
       }
       else if (num == 3){
-        lcd.print("3");
-        lc.setRow(2, i, upArrow[i]);
+        lc.setRow(1, i, downArrow[i]);
       }
       else if (num == 4){
-        lcd.print("4");
-        lc.setRow(3, i, downArrow[i]);
+        lc.setRow(0, i, upArrow[i]);
       }
     }
   }
