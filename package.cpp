@@ -588,12 +588,12 @@ void loop() {
 
     // 점프맨
     if (nowState == 1) {
-      memorizegame();
+      jumpman(cnt);
     }
     // 테트리스
     else if (nowState == 2) {
       // tetris(upState, downState, leftState, rightState);
-      memorizegame();
+      jumpman(cnt);
     }
     // 스네이크
     else if (nowState == 3) {
@@ -604,11 +604,11 @@ void loop() {
 
 void whatGame() { //현재 무슨게임인지 알려주는 함수
   if (nowState == 1) {
-    lcd.print("snake");
+    lcd.print("null");
   } else if (nowState == 2) {
-    lcd.print("tetris");
-  } else if (nowState == 3) {
     lcd.print("jumpman");
+  } else if (nowState == 3) {
+    lcd.print("memorizeGame");
   }
 }
 
@@ -1637,6 +1637,7 @@ void memorizegame() {
     showArrow(randomArray[j], 1);
     delay(1000);
     showArrow(randomArray[j], 0);
+    delay(100);
   }
   // countA for문
   countA++;
